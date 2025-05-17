@@ -11,7 +11,7 @@ from google.genai import types
 import textwrap
 from IPython.display import Markdown
 
-os.environ["GOOGLE_API_KEY"] = "AIzaSyCrqjgYm-y7DTjncCDMR0TpYHUc7iVB8NE"  # Substitua pela sua chave real
+os.environ["GOOGLE_API_KEY"] = "AIzaSyCrqjgYm-y7DTjncCDMR0TpYHUc7iVB8NE"  
 client = genai.Client()
 MODEL_ID = "gemini-2.0-flash"
 
@@ -55,7 +55,6 @@ class App(tk.Tk):
         else:
             self.background_canvas.config(bg="#333333")
 
-        # --- Estilos ttk ---
         self.style = ttk.Style()
         self.style.theme_use('clam')
         self.style.configure("TFrame", background="#000000")
@@ -63,24 +62,20 @@ class App(tk.Tk):
         self.style.configure("TRadiobutton", background='#000000', foreground='white')
         self.style.configure("TButton", foreground='black', background='#cccccc', padding=(10, 5), relief='groove')
 
-        # --- Frames das telas ---
         self.home_frame = ttk.Frame(self.background_canvas)
         self.generator_frame = ttk.Frame(self.background_canvas)
         self.item_help_frame = ttk.Frame(self.background_canvas)
         self.master_chat_frame = ttk.Frame(self.background_canvas)
         self.dice_roll_frame = ttk.Frame(self.background_canvas)
 
-        # --- Posicionamento inicial ---
         self.home_frame.place(relx=0.5, rely=0.5, anchor="center")
 
-        # --- Conteúdo da Home ---
         ttk.Label(self.home_frame, text="Bem-vindo(a)!", font=("Arial", 16, "bold")).pack(pady=10)
         ttk.Button(self.home_frame, text="Gerador de Nome", command=self.show_generator).pack(pady=5, padx=20, fill="x")
         ttk.Button(self.home_frame, text="Ajuda com Equipamentos", command=self.show_item_help).pack(pady=5, padx=20, fill="x")
         ttk.Button(self.home_frame, text="Converse com o Mestre", command=self.show_master_chat).pack(pady=5, padx=20, fill="x")
         ttk.Button(self.home_frame, text="Rodar Dados", command=self.show_dice_roll).pack(pady=5, padx=20, fill="x")
 
-        # --- Conteúdo do Gerador de Nome ---
         self.generator_frame.columnconfigure(0, weight=1)
         self.generator_frame.columnconfigure(1, weight=1)
         self.generator_frame.rowconfigure(9, weight=1)
@@ -91,8 +86,6 @@ class App(tk.Tk):
         self.race_list = ["Dracônico", "Anão", "Elfo", "Gnomo", "Meio-elfo", 
                      "Meio-orc", "Pequenino", "Humano", "Tiefling"]
         
-
-
         self.race_images = {
             "Dracônico": "dragonborn.png",
             "Anão": "dwarf.png",
@@ -164,18 +157,9 @@ class App(tk.Tk):
         self.generated_name_label = ttk.Label(
             self.generator_frame, 
             textvariable=self.generated_name,
-            font=("Arial", 16, "bold")  # Fonte maior e em negrito
+            font=("Arial", 16, "bold")  
         )
         self.generated_name_label.grid(row=9, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
-
-        # --- Conteúdo da Ajuda com Itens ---
-        # O conteúdo será adicionado na função show_item_help
-
-        # --- Conteúdo do Converse com o Mestre ---
-        # O conteúdo será adicionado na função show_master_chat
-
-        # --- Conteúdo do Rodar Dados ---
-        # O conteúdo será adicionado na função show_dice_roll
 
         self.show_home()
 
@@ -199,26 +183,22 @@ class App(tk.Tk):
         self.master_chat_frame.place_forget()
         self.dice_roll_frame.place_forget()
     
-        # Configuração do frame principal
         self.item_help_frame.place(relx=0.5, rely=0.5, anchor="center")
         self.item_help_frame.columnconfigure(0, weight=1)
-        self.item_help_frame.rowconfigure(2, weight=1)  # Espaço para o chat
-
-        # Título centralizado grande
+        self.item_help_frame.rowconfigure(2, weight=1)  
+        
         ttk.Label(
             self.item_help_frame, 
             text="Ajuda com Equipamentos", 
             font=("Arial", 18, "bold")
         ).grid(row=0, column=0, columnspan=2, pady=(10, 20), sticky="ew")
 
-        # Botão Voltar alinhado à esquerda
         ttk.Button(
             self.item_help_frame, 
             text="Voltar", 
             command=self.show_home
         ).grid(row=1, column=0, sticky="nw", padx=10, pady=5)
 
-        # Imagem de Itens alinhada à direita
         try:
             itens_image = Image.open("itens.png")
             itens_image = itens_image.resize((150, 150))
@@ -233,7 +213,6 @@ class App(tk.Tk):
                 font=("Arial", 10)
             ).grid(row=1, column=1, padx=10, pady=5, sticky="ne")
 
-        # Área de Chat (abaixo do título e botões)
         self.item_chat_area = tk.Text(
             self.item_help_frame, 
             state='disabled', 
@@ -244,14 +223,12 @@ class App(tk.Tk):
         )
         self.item_chat_area.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
-        # Entrada de Texto
         self.item_input_entry = ttk.Entry(
             self.item_help_frame,
             font=("Arial", 11)
         )
         self.item_input_entry.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
 
-        # Botão Enviar
         send_button = ttk.Button(
             self.item_help_frame, 
             text="Enviar", 
@@ -264,16 +241,15 @@ class App(tk.Tk):
         self.item_input_entry.delete(0, tk.END)
         if user_message:
             self.display_item_message("Você:", user_message)
-            self.get_item_response(user_message) # Simulação da resposta sobre itens
+            self.get_item_response(user_message) 
 
     def display_item_message(self, sender, message):
         self.item_chat_area.config(state='normal')
         self.item_chat_area.insert(tk.END, f"{sender} {message}\n")
         self.item_chat_area.config(state='disabled')
-        self.item_chat_area.see(tk.END) # Autoscroll para a última mensagem
+        self.item_chat_area.see(tk.END) 
 
     def get_item_response(self, user_message):
-        # Agente 1 - Analista de Necessidades
         needs_analyzer = Agent(
             name="item_needs_analyzer",
             model=MODEL_ID,
@@ -289,7 +265,6 @@ class App(tk.Tk):
             [Objetivo]: <objetivo>"""
         )
     
-        # Agente 2 - Especialista em Builds
         build_expert = Agent(
             name="item_build_expert",
             model=MODEL_ID,
@@ -305,7 +280,6 @@ class App(tk.Tk):
             5. Limite a 3-5 itens por categoria"""
         )
     
-        # Agente 3 - Negociador de Itens
         item_negotiator = Agent(
             name="item_negotiator",
             model=MODEL_ID,
@@ -318,16 +292,12 @@ class App(tk.Tk):
             5. Inclua dicas para conseguir descontos"""
         )
 
-        # Primeiro analisamos as necessidades
         analysis = call_agent(needs_analyzer, user_message)
     
-        # Obter recomendações de build
         recommendations = call_agent(build_expert, f"Análise do personagem:\n{analysis}\nPergunta original: {user_message}")
     
-        # Obter informações de obtenção
         acquisition_info = call_agent(item_negotiator, f"Itens recomendados:\n{recommendations}\nContexto:\n{analysis}")
 
-        # Formatamos a resposta completa
         full_response = (
         f"🔍 Análise das suas necessidades:\n{analysis}\n\n"
         f"🛡️ Recomendações de Equipamentos:\n{recommendations}\n\n"
@@ -342,26 +312,22 @@ class App(tk.Tk):
         self.item_help_frame.place_forget()
         self.dice_roll_frame.place_forget()
     
-        # Configuração do frame principal
         self.master_chat_frame.place(relx=0.5, rely=0.5, anchor="center")
         self.master_chat_frame.columnconfigure(0, weight=1)
-        self.master_chat_frame.rowconfigure(2, weight=1)  # Espaço para o chat
+        self.master_chat_frame.rowconfigure(2, weight=1)  
 
-        # Título centralizado grande
         ttk.Label(
             self.master_chat_frame, 
             text="Converse com o Mestre", 
             font=("Arial", 18, "bold")
         ).grid(row=0, column=0, columnspan=2, pady=(10, 20), sticky="ew")
 
-        # Botão Voltar alinhado à esquerda
         ttk.Button(
             self.master_chat_frame, 
             text="Voltar", 
             command=self.show_home
         ).grid(row=1, column=0, sticky="nw", padx=10, pady=5)
 
-        # Imagem do Mestre alinhada à direita
         try:
             master_image = Image.open("mestre.png")
             master_image = master_image.resize((150, 150))
@@ -376,7 +342,6 @@ class App(tk.Tk):
                 font=("Arial", 10)
             ).grid(row=1, column=1, padx=10, pady=5, sticky="ne")
 
-        # Área de Chat (abaixo do título e botões)
         self.chat_area = tk.Text(
             self.master_chat_frame, 
             state='disabled', 
@@ -387,14 +352,12 @@ class App(tk.Tk):
         )
         self.chat_area.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
-        # Entrada de Texto
         self.input_entry = ttk.Entry(
             self.master_chat_frame,
             font=("Arial", 11)
         )      
         self.input_entry.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
 
-        # Botão Enviar
         send_button = ttk.Button(
             self.master_chat_frame, 
             text="Enviar", 
@@ -407,16 +370,15 @@ class App(tk.Tk):
         self.input_entry.delete(0, tk.END)
         if user_message:
             self.display_message("Você:", user_message)
-            self.get_master_response(user_message) # Simulação da resposta do mestre
+            self.get_master_response(user_message) 
 
     def display_message(self, sender, message):
         self.chat_area.config(state='normal')
         self.chat_area.insert(tk.END, f"{sender} {message}\n")
         self.chat_area.config(state='disabled')
-        self.chat_area.see(tk.END) # Autoscroll para a última mensagem
+        self.chat_area.see(tk.END) 
 
     def get_master_response(self, user_message):
-        # Agente 1 - Analista de Contexto
         context_analyzer = Agent(
             name="context_analyzer",
             model=MODEL_ID,
@@ -428,7 +390,6 @@ class App(tk.Tk):
             4. Retornar um resumo conciso do contexto"""
         )
     
-        # Agente 2 - Especialista em Regras
         rules_expert = Agent(
             name="rules_expert",
             model=MODEL_ID,
@@ -440,7 +401,6 @@ class App(tk.Tk):
             4. Mantenha a resposta curta e direta"""
         )
     
-        # Agente 3 - Criador de Histórias
         storyteller = Agent(
             name="storyteller",
             model=MODEL_ID,
@@ -452,14 +412,11 @@ class App(tk.Tk):
             4. Manter o tom adequado ao universo do jogo"""
         )
 
-        # Primeiro analisamos o contexto
         context = call_agent(context_analyzer, user_message)
     
-        # Decidimos qual agente usar baseado no contexto
         if "regra" in context.lower() or "mecânica" in context.lower():
             response = call_agent(rules_expert, f"Contexto: {context}\nPergunta: {user_message}")
         else:
-            # Para dúvidas narrativas, usamos ambos os especialistas
             rules_part = call_agent(rules_expert, f"Contexto: {context}\nPergunta: {user_message}\nSe não for sobre regras, responda 'Não se aplica'")
             story_part = call_agent(storyteller, f"Contexto: {context}\nPergunta: {user_message}")
         
@@ -468,7 +425,6 @@ class App(tk.Tk):
             else:
                 response = story_part
     
-        # Exibimos a resposta formatada
         self.after(1000, self.display_message, "Mestre:", response)
 
     def show_dice_roll(self):
@@ -480,24 +436,20 @@ class App(tk.Tk):
         self.dice_roll_frame.columnconfigure(0, weight=1)
         self.dice_roll_frame.rowconfigure(1, weight=1)
 
-        # Botão Voltar
         ttk.Button(self.dice_roll_frame, text="Voltar", command=self.show_home).grid(row=0, column=0, sticky="nw", padx=5, pady=5)
 
-        # Imagem de Dados
         try:
             dice_image = Image.open("dados.png")
-            # --- Redimensionar a imagem ---
-            new_width = 150  # Defina a nova largura desejada
-            new_height = 150 # Defina a nova altura desejada
+            new_width = 150  
+            new_height = 150 
             resized_dice_image = dice_image.resize((new_width, new_height))
             dice_photo = ImageTk.PhotoImage(resized_dice_image)
             dice_label = ttk.Label(self.dice_roll_frame, image=dice_photo)
-            dice_label.image = dice_photo # Manter referência
+            dice_label.image = dice_photo 
             dice_label.grid(row=0, column=1, padx=10, pady=10, sticky="ne")
         except FileNotFoundError:
             ttk.Label(self.dice_roll_frame, text="Imagem de Dados não encontrada.").grid(row=0, column=1, padx=10, pady=10, sticky="ne")
 
-        # Frame para os Radiobuttons
         dice_select_frame = ttk.Frame(self.dice_roll_frame)
         dice_select_frame.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
 
@@ -507,11 +459,9 @@ class App(tk.Tk):
         for i, dice in enumerate(dices):
             ttk.Radiobutton(dice_select_frame, text=dice, variable=self.selected_dice, value=dice).pack(side="left", padx=5)
 
-        # Botão de Rolagem
         roll_button = ttk.Button(self.dice_roll_frame, text="Rolar Dado", command=self.roll_dice)
         roll_button.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
 
-        # Label para exibir o resultado
         self.roll_result = tk.StringVar(value="Resultado:")
         result_label = ttk.Label(self.dice_roll_frame, textvariable=self.roll_result, font=("Arial", 12))
         result_label.grid(row=3, column=0, padx=10, pady=10, sticky="ew")
@@ -546,7 +496,7 @@ class App(tk.Tk):
                 img = img.resize((100, 100))
                 self.class_photo = ImageTk.PhotoImage(img)
                 self.class_image_label.config(image=self.class_photo)
-                self.class_image_label.image = self.class_photo  # Manter referência
+                self.class_image_label.image = self.class_photo  
             except Exception as e:
                 print(f"Erro ao carregar {img_file}: {e}")
                 self.create_placeholder_class()
@@ -570,7 +520,7 @@ class App(tk.Tk):
                 img = img.resize((100, 100))
                 self.race_photo = ImageTk.PhotoImage(img)
                 self.race_image_label.config(image=self.race_photo)
-                self.race_image_label.image = self.race_photo  # Manter referência
+                self.race_image_label.image = self.race_photo  
             except Exception as e:
                 print(f"Erro ao carregar {img_file}: {e}")
                 self.create_placeholder_race()
