@@ -1,0 +1,29 @@
+# Arquivos do ambiente virtual
+.venv/
+
+# Arquivos Python gerados
+__pycache__/
+*.pyc
+*.pyd
+
+# Arquivos de configuração local (se você tiver)
+.env
+*.ini
+*.log
+
+# Arquivos temporários do sistema operacional
+Thumbs.db
+.DS_Store
+
+# Arquivos de pacotes/distribuição (se você for criar pacotes)
+build/
+dist/
+*.egg-info/
+
+# Pasta de módulos do IPython (se relevante)
+.ipython/profile_default/db/
+
+# Arquivos temporários de IDEs (se você usa outras)
+.idea/
+.vscode/
+nbproject/
