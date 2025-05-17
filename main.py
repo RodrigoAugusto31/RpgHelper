@@ -36,7 +36,7 @@ def to_markdown(text):
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Gerador de Personagens")
+        self.title("Tomo Mágico - Assistente para Aventureiros")
         self.geometry("1200x1000")
         self.resizable(False, False)
 
