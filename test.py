@@ -254,10 +254,68 @@ class App(tk.Tk):
         self.item_chat_area.see(tk.END) # Autoscroll para a última mensagem
 
     def get_item_response(self, user_message):
-        # Aqui você implementaria a lógica para obter a ajuda sobre itens
-        # Por enquanto, vamos simular uma resposta simples
-        item_response = f"Ah, você precisa de ajuda com itens? Conte-me mais sobre qual item você tem dúvidas!"
-        self.after(2000, self.display_item_message, "Ajuda:", item_response)
+        # Agente 1 - Analista de Necessidades
+        needs_analyzer = Agent(
+            name="item_needs_analyzer",
+            model=MODEL_ID,
+            description="Analisa as necessidades do jogador em relação a itens",
+            instruction="""Você é um especialista em análise de necessidades de RPG. Sua tarefa é:
+            1. Identificar o tipo de personagem (classe, raça, nível)
+            2. Determinar o cenário atual (combate, exploração, social)
+            3. Extrair os objetivos do jogador
+            4. Retornar um resumo formatado:
+            [Classe]: <classe>
+            [Nível]: <nível>
+            [Situação]: <situação>
+            [Objetivo]: <objetivo>"""
+        )
+    
+        # Agente 2 - Especialista em Builds
+        build_expert = Agent(
+            name="item_build_expert",
+            model=MODEL_ID,
+            description="Recomenda builds de equipamentos para personagens",
+            instruction="""Você é um especialista em builds de RPG. Com base na análise:
+            1. Recomende os melhores itens para a situação
+            2. Considere sinergias entre itens
+            3. Sugira combinações para diferentes orçamentos
+            4. Classifique como:
+            - Essencial: Itens indispensáveis
+            - Recomendado: Boas opções
+            - Situacional: Casos específicos
+            5. Limite a 3-5 itens por categoria"""
+        )
+    
+        # Agente 3 - Negociador de Itens
+        item_negotiator = Agent(
+            name="item_negotiator",
+            model=MODEL_ID,
+            description="Ensina como obter os itens recomendados",
+            instruction="""Você é um mestre negociador de itens. Para cada item recomendado:
+            1. Indique onde encontrar (lojas, saque, crafting)
+            2. Estime o valor aproximado
+            3. Sugira trocas ou negociações
+            4. Aponte alternativas mais acessíveis
+            5. Inclua dicas para conseguir descontos"""
+        )
+
+        # Primeiro analisamos as necessidades
+        analysis = call_agent(needs_analyzer, user_message)
+    
+        # Obter recomendações de build
+        recommendations = call_agent(build_expert, f"Análise do personagem:\n{analysis}\nPergunta original: {user_message}")
+    
+        # Obter informações de obtenção
+        acquisition_info = call_agent(item_negotiator, f"Itens recomendados:\n{recommendations}\nContexto:\n{analysis}")
+
+        # Formatamos a resposta completa
+        full_response = (
+        f"🔍 Análise das suas necessidades:\n{analysis}\n\n"
+        f"🛡️ Recomendações de Equipamentos:\n{recommendations}\n\n"
+        f"💰 Como obter esses itens:\n{acquisition_info}"
+        )
+
+        self.after(1500, self.display_item_message, "Especialista em Itens:", full_response)
 
     def show_master_chat(self):
         self.home_frame.place_forget()
@@ -312,10 +370,60 @@ class App(tk.Tk):
         self.chat_area.see(tk.END) # Autoscroll para a última mensagem
 
     def get_master_response(self, user_message):
-        # Aqui você implementaria a lógica para obter a resposta do "mestre"
-        # Por enquanto, vamos simular uma resposta simples
-        master_response = f"Hmm, interessante pergunta sobre D&D! Deixe-me pensar..."
-        self.after(2000, self.display_message, "Mestre:", master_response)
+        # Agente 1 - Analista de Contexto
+        context_analyzer = Agent(
+            name="context_analyzer",
+            model=MODEL_ID,
+            description="Analisa o contexto da pergunta sobre RPG",
+            instruction="""Você é um analista especializado em RPG. Sua tarefa é:
+            1. Identificar o tema principal da pergunta
+            2. Determinar se é sobre regras, lore, construção de personagem ou outro
+            3. Extrair informações relevantes como classe, raça, nível do personagem
+            4. Retornar um resumo conciso do contexto"""
+        )
+    
+        # Agente 2 - Especialista em Regras
+        rules_expert = Agent(
+            name="rules_expert",
+            model=MODEL_ID,
+            description="Responde dúvidas sobre regras oficiais de RPG",
+            instruction="""Você é um mestre de RPG com 20 anos de experiência. Responda:
+            1. Baseado apenas nas regras oficiais do sistema
+            2. Seja preciso com páginas e referências quando possível
+            3. Para situações ambíguas, sugira interpretações alternativas
+            4. Mantenha a resposta curta e direta"""
+        )
+    
+        # Agente 3 - Criador de Histórias
+        storyteller = Agent(
+            name="storyteller",
+            model=MODEL_ID,
+            description="Cria conteúdo narrativo para RPG",
+            instruction="""Você é um contador de histórias. Sua tarefa é:
+            1. Enriquecer a resposta com elementos narrativos
+            2. Sugerir twists interessantes para a história
+            3. Criar NPCs, locais ou eventos memoráveis
+            4. Manter o tom adequado ao universo do jogo"""
+        )
+
+        # Primeiro analisamos o contexto
+        context = call_agent(context_analyzer, user_message)
+    
+        # Decidimos qual agente usar baseado no contexto
+        if "regra" in context.lower() or "mecânica" in context.lower():
+            response = call_agent(rules_expert, f"Contexto: {context}\nPergunta: {user_message}")
+        else:
+            # Para dúvidas narrativas, usamos ambos os especialistas
+            rules_part = call_agent(rules_expert, f"Contexto: {context}\nPergunta: {user_message}\nSe não for sobre regras, responda 'Não se aplica'")
+            story_part = call_agent(storyteller, f"Contexto: {context}\nPergunta: {user_message}")
+        
+            if "não se aplica" not in rules_part.lower():
+                response = f"📜 Regras:\n{rules_part}\n\n📖 Narrativa:\n{story_part}"
+            else:
+                response = story_part
+    
+        # Exibimos a resposta formatada
+        self.after(1000, self.display_message, "Mestre:", response)
 
     def show_dice_roll(self):
         self.home_frame.place_forget()
@@ -474,7 +582,11 @@ class App(tk.Tk):
             name="name_generator",
             model=MODEL_ID,
             description="Agente para gerar nomes de personagens de fantasia.",
-            instruction="Você é um especialista em gerar nomes criativos e adequados para personagens de RPG de fantasia. Considere a classe, a raça e o gênero fornecidos para criar um nome interessante e adequado ao contexto.",
+            instruction="""Você é um especialista em gerar nomes criativos e adequados para personagens de RPG de fantasia. 
+            Considere a classe, a raça e o gênero fornecidos para criar um nome interessante e adequado ao contexto.
+            Voce sempre envia apenas um nome e sobre nome sem nenhma informação a mais, evite ao maximo repetir nomes, 
+            cada vez que for pedido para criar um nome novo mude o nome e o sobrenome 
+            """,
         )
         return call_agent(name_generator_agent, prompt)
 
