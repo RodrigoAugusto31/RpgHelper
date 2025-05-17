@@ -11,7 +11,7 @@ from google.genai import types
 import textwrap
 from IPython.display import Markdown
 
-os.environ["GOOGLE_API_KEY"] = "SUA_CHAVE_API_AQUI"  # Substitua pela sua chave real
+os.environ["GOOGLE_API_KEY"] = "AIzaSyCrqjgYm-y7DTjncCDMR0TpYHUc7iVB8NE"  # Substitua pela sua chave real
 client = genai.Client()
 MODEL_ID = "gemini-2.0-flash"
 
@@ -76,7 +76,7 @@ class App(tk.Tk):
         # --- Conteúdo da Home ---
         ttk.Label(self.home_frame, text="Bem-vindo(a)!", font=("Arial", 16, "bold")).pack(pady=10)
         ttk.Button(self.home_frame, text="Gerador de Nome", command=self.show_generator).pack(pady=5, padx=20, fill="x")
-        ttk.Button(self.home_frame, text="Ajuda com Itens", command=self.show_item_help).pack(pady=5, padx=20, fill="x")
+        ttk.Button(self.home_frame, text="Ajuda com Equipamentos", command=self.show_item_help).pack(pady=5, padx=20, fill="x")
         ttk.Button(self.home_frame, text="Converse com o Mestre", command=self.show_master_chat).pack(pady=5, padx=20, fill="x")
         ttk.Button(self.home_frame, text="Rodar Dados", command=self.show_dice_roll).pack(pady=5, padx=20, fill="x")
 
@@ -86,10 +86,51 @@ class App(tk.Tk):
         self.generator_frame.rowconfigure(9, weight=1)
         ttk.Button(self.generator_frame, text="Voltar", command=self.show_home).grid(row=0, column=0, sticky="nw", padx=5, pady=5)
         ttk.Label(self.generator_frame, text="Gerador de Nome", font=("Arial", 14)).grid(row=1, column=0, columnspan=2, pady=10, sticky="ew")
-        self.class_list = ["Barbarian", "Bard", "Cleric", "Druid", "Monk", "Paladin", "Ranger", "Rogue", "Sorcerer", "Warlock", "Warrior", "Wizard"]
-        self.race_list = ["Dragonborn", "Dwarf", "Elf", "Gnome", "Half-elf", "Half-orc", "Halfling", "Human", "Tiefling"]
-        self.class_images = [None] * len(self.class_list)
-        self.race_images = [None] * len(self.race_list)
+        self.class_list = ["Barbarian", "Bard", "Cleric", "Druid", "Monk", "Paladin", 
+                      "Ranger", "Rogue", "Sorcerer", "Warlock", "Warrior", "Wizard"]
+        self.race_list = ["Dragonborn", "Dwarf", "Elf", "Gnome", "Half-elf", 
+                     "Half-orc", "Halfling", "Human", "Tiefling"]
+        self.class_images = {
+    "Barbarian": os.path.join("images", "classes", "barbarian.png"),
+    "Bard": os.path.join("images", "classes", "bard.png"),
+    "Cleric": os.path.join("images", "classes", "cleric.png"),
+    "Druid": os.path.join("images", "classes", "druid.png"),  # Adicionei a que faltava
+    "Monk": os.path.join("images", "classes", "monk.png"),
+    "Paladin": os.path.join("images", "classes", "paladin.png"),
+    "Ranger": os.path.join("images", "classes", "ranger.png"),
+    "Rogue": os.path.join("images", "classes", "rogue.png"),
+    "Sorcerer": os.path.join("images", "classes", "sorcerer.png"),
+    "Warlock": os.path.join("images", "classes", "warlock.png"),
+    "Warrior": os.path.join("images", "classes", "warrior.png"),
+    "Wizard": os.path.join("images", "classes", "wizard.png")
+}
+
+        self.race_images = {
+            "Dragonborn": "dragonborn.png",
+            "Dwarf": "dwarf.png",
+            "Elf": "elf.png",
+            "Gnome": "gnome.png",
+            "Half-elf": "halfElf.png",
+            "Half-orc": "halfOrc.png",
+            "Halfling": "halfling.png",
+            "Human": "human.png",
+            "Tiefling": "tiefling.png"
+}
+        self.class_images = {
+            "Barbarian": "barbarian.png",
+            "Bard": "bard.png",
+            "Cleric": "cleric.png",
+            "Druid": "druid.png",
+            "Monk": "monk.png",
+            "Paladin": "paladin.png",
+            "Ranger": "ranger.png",
+            "Rogue": "rogue.png",
+            "Sorcerer": "sorcerer.png",
+            "Warlock": "warlock.png",
+            "Warrior": "warrior.png",
+            "Wizard": "wizard.png"
+}
+        
         self.selected_class_index = 0
         self.selected_race_index = 0
         ttk.Label(self.generator_frame, text="Classe:").grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
@@ -288,6 +329,20 @@ class App(tk.Tk):
         # Botão Voltar
         ttk.Button(self.dice_roll_frame, text="Voltar", command=self.show_home).grid(row=0, column=0, sticky="nw", padx=5, pady=5)
 
+        # Imagem de Dados
+        try:
+            dice_image = Image.open("dados.png")
+            # --- Redimensionar a imagem ---
+            new_width = 150  # Defina a nova largura desejada
+            new_height = 150 # Defina a nova altura desejada
+            resized_dice_image = dice_image.resize((new_width, new_height))
+            dice_photo = ImageTk.PhotoImage(resized_dice_image)
+            dice_label = ttk.Label(self.dice_roll_frame, image=dice_photo)
+            dice_label.image = dice_photo # Manter referência
+            dice_label.grid(row=0, column=1, padx=10, pady=10, sticky="ne")
+        except FileNotFoundError:
+            ttk.Label(self.dice_roll_frame, text="Imagem de Dados não encontrada.").grid(row=0, column=1, padx=10, pady=10, sticky="ne")
+
         # Frame para os Radiobuttons
         dice_select_frame = ttk.Frame(self.dice_roll_frame)
         dice_select_frame.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
@@ -328,28 +383,52 @@ class App(tk.Tk):
         self.roll_result.set(f"Resultado: {result}")
 
     def update_class_image(self):
-        img_width = 50
-        img_height = 50
-        img = Image.new("RGB", (img_width, img_height), color=self.get_placeholder_color(self.selected_class_index))
-        mask = Image.new('L', (img_width, img_height), 0)
-        from PIL import ImageDraw
-        draw = ImageDraw.Draw(mask)
-        draw.ellipse((0, 0, img_width, img_height), fill=255)
-        img.putalpha(mask)
+        current_class = self.class_list[self.selected_class_index]
+        img_file = self.class_images.get(current_class)
+    
+        if img_file and os.path.exists(img_file):
+            try:
+                img = Image.open(img_file)
+                img = img.resize((100, 100))
+                self.class_photo = ImageTk.PhotoImage(img)
+                self.class_image_label.config(image=self.class_photo)
+                self.class_image_label.image = self.class_photo  # Manter referência
+            except Exception as e:
+                print(f"Erro ao carregar {img_file}: {e}")
+                self.create_placeholder_class()
+        else:
+            print(f"Arquivo não encontrado: {img_file}")
+            self.create_placeholder_class()
+
+    def create_placeholder_class(self):
+        img = Image.new("RGB", (100, 100), color=self.get_placeholder_color(self.selected_class_index))
         self.class_photo = ImageTk.PhotoImage(img)
         self.class_image_label.config(image=self.class_photo)
+        self.class_image_label.image = self.class_photo
 
     def update_race_image(self):
-        img_width = 50
-        img_height = 50
-        img = Image.new("RGB", (img_width, img_height), color=self.get_placeholder_color(self.selected_race_index + len(self.class_list)))
-        mask = Image.new('L', (img_width, img_height), 0)
-        from PIL import ImageDraw
-        draw = ImageDraw.Draw(mask)
-        draw.ellipse((0, 0, img_width, img_height), fill=255)
-        img.putalpha(mask)
+        current_race = self.race_list[self.selected_race_index]
+        img_file = self.race_images.get(current_race)
+    
+        if img_file and os.path.exists(img_file):
+            try:
+                img = Image.open(img_file)
+                img = img.resize((100, 100))
+                self.race_photo = ImageTk.PhotoImage(img)
+                self.race_image_label.config(image=self.race_photo)
+                self.race_image_label.image = self.race_photo  # Manter referência
+            except Exception as e:
+                print(f"Erro ao carregar {img_file}: {e}")
+                self.create_placeholder_race()
+        else:
+            print(f"Arquivo não encontrado: {img_file}")
+            self.create_placeholder_race()
+
+    def create_placeholder_race(self):
+        img = Image.new("RGB", (100, 100), color=self.get_placeholder_color(self.selected_race_index + len(self.class_list)))
         self.race_photo = ImageTk.PhotoImage(img)
         self.race_image_label.config(image=self.race_photo)
+        self.race_image_label.image = self.race_photo
 
     def get_placeholder_color(self, index):
         colors = ["red", "green", "blue", "yellow", "purple", "orange", "cyan", "magenta", "lime", "teal", "navy", "olive", "maroon", "silver"]
