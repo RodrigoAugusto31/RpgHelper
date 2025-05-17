@@ -86,49 +86,37 @@ class App(tk.Tk):
         self.generator_frame.rowconfigure(9, weight=1)
         ttk.Button(self.generator_frame, text="Voltar", command=self.show_home).grid(row=0, column=0, sticky="nw", padx=5, pady=5)
         ttk.Label(self.generator_frame, text="Gerador de Nome", font=("Arial", 14)).grid(row=1, column=0, columnspan=2, pady=10, sticky="ew")
-        self.class_list = ["Barbarian", "Bard", "Cleric", "Druid", "Monk", "Paladin", 
-                      "Ranger", "Rogue", "Sorcerer", "Warlock", "Warrior", "Wizard"]
-        self.race_list = ["Dragonborn", "Dwarf", "Elf", "Gnome", "Half-elf", 
-                     "Half-orc", "Halfling", "Human", "Tiefling"]
-        self.class_images = {
-    "Barbarian": os.path.join("images", "classes", "barbarian.png"),
-    "Bard": os.path.join("images", "classes", "bard.png"),
-    "Cleric": os.path.join("images", "classes", "cleric.png"),
-    "Druid": os.path.join("images", "classes", "druid.png"),  # Adicionei a que faltava
-    "Monk": os.path.join("images", "classes", "monk.png"),
-    "Paladin": os.path.join("images", "classes", "paladin.png"),
-    "Ranger": os.path.join("images", "classes", "ranger.png"),
-    "Rogue": os.path.join("images", "classes", "rogue.png"),
-    "Sorcerer": os.path.join("images", "classes", "sorcerer.png"),
-    "Warlock": os.path.join("images", "classes", "warlock.png"),
-    "Warrior": os.path.join("images", "classes", "warrior.png"),
-    "Wizard": os.path.join("images", "classes", "wizard.png")
-}
+        self.class_list = ["Bárbaro", "Bardo", "Clérigo", "Druida", "Monge", "Paladino", 
+                      "Patrulheiro", "Ladino", "Feiticeiro", "Bruxo", "Guerreiro", "Mago"]
+        self.race_list = ["Dracônico", "Anão", "Elfo", "Gnomo", "Meio-elfo", 
+                     "Meio-orc", "Pequenino", "Humano", "Tiefling"]
+        
+
 
         self.race_images = {
-            "Dragonborn": "dragonborn.png",
-            "Dwarf": "dwarf.png",
-            "Elf": "elf.png",
-            "Gnome": "gnome.png",
-            "Half-elf": "halfElf.png",
-            "Half-orc": "halfOrc.png",
-            "Halfling": "halfling.png",
-            "Human": "human.png",
+            "Dracônico": "dragonborn.png",
+            "Anão": "dwarf.png",
+            "Elfo": "elf.png",
+            "Gnomo": "gnome.png",
+            "Meio-elfo": "halfElf.png",
+            "Meio-orc": "halfOrc.png",
+            "Pequenino": "halfling.png",
+            "Humano": "human.png",
             "Tiefling": "tiefling.png"
 }
         self.class_images = {
-            "Barbarian": "barbarian.png",
-            "Bard": "bard.png",
-            "Cleric": "cleric.png",
-            "Druid": "druid.png",
-            "Monk": "monk.png",
-            "Paladin": "paladin.png",
-            "Ranger": "ranger.png",
-            "Rogue": "rogue.png",
-            "Sorcerer": "sorcerer.png",
-            "Warlock": "warlock.png",
-            "Warrior": "warrior.png",
-            "Wizard": "wizard.png"
+            "Bárbaro": "barbarian.png",
+            "Bardo": "bard.png",
+            "Clérigo": "cleric.png",
+            "Druida": "druid.png",
+            "Monge": "monk.png",
+            "Paladino": "paladin.png",
+            "Patrulheiro": "ranger.png",
+            "Ladino": "rogue.png",
+            "Feiticeiro": "sorcerer.png",
+            "Bruxo": "warlock.png",
+            "Guerreiro": "warrior.png",
+            "Mago": "wizard.png"
 }
         
         self.selected_class_index = 0
@@ -172,8 +160,12 @@ class App(tk.Tk):
         ttk.Radiobutton(gender_frame, text="Neutro", variable=self.selected_gender, value="neutral", style="TRadiobutton").pack(side="left", padx=5, pady=5, expand=True)
         ttk.Radiobutton(gender_frame, text="Masculino", variable=self.selected_gender, value="male", style="TRadiobutton").pack(side="left", padx=5, pady=5, expand=True)
         ttk.Button(self.generator_frame, text="Gerar", command=self.generate_name).grid(row=8, column=0, columnspan=2, padx=5, pady=10, sticky="ew")
-        self.generated_name = tk.StringVar(value="Nome Gerado:")
-        self.generated_name_label = ttk.Label(self.generator_frame, textvariable=self.generated_name)
+        self.generated_name = tk.StringVar(value="✨ Seu nome de personagem aparecerá aqui ✨")
+        self.generated_name_label = ttk.Label(
+            self.generator_frame, 
+            textvariable=self.generated_name,
+            font=("Arial", 16, "bold")  # Fonte maior e em negrito
+        )
         self.generated_name_label.grid(row=9, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
 
         # --- Conteúdo da Ajuda com Itens ---
@@ -206,39 +198,66 @@ class App(tk.Tk):
         self.generator_frame.place_forget()
         self.master_chat_frame.place_forget()
         self.dice_roll_frame.place_forget()
+    
+        # Configuração do frame principal
         self.item_help_frame.place(relx=0.5, rely=0.5, anchor="center")
         self.item_help_frame.columnconfigure(0, weight=1)
-        self.item_help_frame.rowconfigure(1, weight=1) # Para a área de chat expandir
+        self.item_help_frame.rowconfigure(2, weight=1)  # Espaço para o chat
 
-        # Botão Voltar
-        ttk.Button(self.item_help_frame, text="Voltar", command=self.show_home).grid(row=0, column=0, sticky="nw", padx=5, pady=5)
+        # Título centralizado grande
+        ttk.Label(
+            self.item_help_frame, 
+            text="Ajuda com Equipamentos", 
+            font=("Arial", 18, "bold")
+        ).grid(row=0, column=0, columnspan=2, pady=(10, 20), sticky="ew")
 
-        # Imagem de Itens
+        # Botão Voltar alinhado à esquerda
+        ttk.Button(
+            self.item_help_frame, 
+            text="Voltar", 
+            command=self.show_home
+        ).grid(row=1, column=0, sticky="nw", padx=10, pady=5)
+
+        # Imagem de Itens alinhada à direita
         try:
             itens_image = Image.open("itens.png")
-            # --- Redimensionar a imagem ---
-            new_width = 150  # Defina a nova largura desejada
-            new_height = 150 # Defina a nova altura desejada
-            resized_itens_image = itens_image.resize((new_width, new_height))
-            itens_photo = ImageTk.PhotoImage(resized_itens_image)
+            itens_image = itens_image.resize((150, 150))
+            itens_photo = ImageTk.PhotoImage(itens_image)
             itens_label = ttk.Label(self.item_help_frame, image=itens_photo)
-            itens_label.image = itens_photo # Manter referência
-            itens_label.grid(row=0, column=1, padx=10, pady=10, sticky="ne")
+            itens_label.image = itens_photo
+            itens_label.grid(row=1, column=1, padx=10, pady=5, sticky="ne")
         except FileNotFoundError:
-            ttk.Label(self.item_help_frame, text="Imagem de Itens não encontrada.").grid(row=0, column=1, padx=10, pady=10, sticky="ne")
+            ttk.Label(
+                self.item_help_frame, 
+                text="Ícone de Itens", 
+                font=("Arial", 10)
+            ).grid(row=1, column=1, padx=10, pady=5, sticky="ne")
 
-        # Área de Chat
-        self.item_chat_area = tk.Text(self.item_help_frame, state='disabled', wrap='word')
-        self.item_chat_area.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
+        # Área de Chat (abaixo do título e botões)
+        self.item_chat_area = tk.Text(
+            self.item_help_frame, 
+            state='disabled', 
+            wrap='word',
+            font=("Arial", 11),
+            height=15,
+            width=50
+        )
+        self.item_chat_area.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
         # Entrada de Texto
-        self.item_input_entry = ttk.Entry(self.item_help_frame)
-        self.item_input_entry.grid(row=2, column=0, padx=10, pady=5, sticky="ew")
-        self.item_input_entry.bind("<Return>", self.send_item_message) # Enviar com Enter
+        self.item_input_entry = ttk.Entry(
+            self.item_help_frame,
+            font=("Arial", 11)
+        )
+        self.item_input_entry.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
 
         # Botão Enviar
-        send_button = ttk.Button(self.item_help_frame, text="Enviar", command=self.send_item_message)
-        send_button.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
+        send_button = ttk.Button(
+            self.item_help_frame, 
+            text="Enviar", 
+            command=self.send_item_message
+        )
+        send_button.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
 
     def send_item_message(self, event=None):
         user_message = self.item_input_entry.get()
@@ -254,49 +273,134 @@ class App(tk.Tk):
         self.item_chat_area.see(tk.END) # Autoscroll para a última mensagem
 
     def get_item_response(self, user_message):
-        # Aqui você implementaria a lógica para obter a ajuda sobre itens
-        # Por enquanto, vamos simular uma resposta simples
-        item_response = f"Ah, você precisa de ajuda com itens? Conte-me mais sobre qual item você tem dúvidas!"
-        self.after(2000, self.display_item_message, "Ajuda:", item_response)
+        # Agente 1 - Analista de Necessidades
+        needs_analyzer = Agent(
+            name="item_needs_analyzer",
+            model=MODEL_ID,
+            description="Analisa as necessidades do jogador em relação a itens",
+            instruction="""Você é um especialista em análise de necessidades de RPG. Sua tarefa é:
+            1. Identificar o tipo de personagem (classe, raça, nível)
+            2. Determinar o cenário atual (combate, exploração, social)
+            3. Extrair os objetivos do jogador
+            4. Retornar um resumo formatado:
+            [Classe]: <classe>
+            [Nível]: <nível>
+            [Situação]: <situação>
+            [Objetivo]: <objetivo>"""
+        )
+    
+        # Agente 2 - Especialista em Builds
+        build_expert = Agent(
+            name="item_build_expert",
+            model=MODEL_ID,
+            description="Recomenda builds de equipamentos para personagens",
+            instruction="""Você é um especialista em builds de RPG. Com base na análise:
+            1. Recomende os melhores itens para a situação
+            2. Considere sinergias entre itens
+            3. Sugira combinações para diferentes orçamentos
+            4. Classifique como:
+            - Essencial: Itens indispensáveis
+            - Recomendado: Boas opções
+            - Situacional: Casos específicos
+            5. Limite a 3-5 itens por categoria"""
+        )
+    
+        # Agente 3 - Negociador de Itens
+        item_negotiator = Agent(
+            name="item_negotiator",
+            model=MODEL_ID,
+            description="Ensina como obter os itens recomendados",
+            instruction="""Você é um mestre negociador de itens. Para cada item recomendado:
+            1. Indique onde encontrar (lojas, saque, crafting)
+            2. Estime o valor aproximado
+            3. Sugira trocas ou negociações
+            4. Aponte alternativas mais acessíveis
+            5. Inclua dicas para conseguir descontos"""
+        )
+
+        # Primeiro analisamos as necessidades
+        analysis = call_agent(needs_analyzer, user_message)
+    
+        # Obter recomendações de build
+        recommendations = call_agent(build_expert, f"Análise do personagem:\n{analysis}\nPergunta original: {user_message}")
+    
+        # Obter informações de obtenção
+        acquisition_info = call_agent(item_negotiator, f"Itens recomendados:\n{recommendations}\nContexto:\n{analysis}")
+
+        # Formatamos a resposta completa
+        full_response = (
+        f"🔍 Análise das suas necessidades:\n{analysis}\n\n"
+        f"🛡️ Recomendações de Equipamentos:\n{recommendations}\n\n"
+        f"💰 Como obter esses itens:\n{acquisition_info}"
+        )
+
+        self.after(1500, self.display_item_message, "Especialista em Itens:", full_response)
 
     def show_master_chat(self):
         self.home_frame.place_forget()
         self.generator_frame.place_forget()
         self.item_help_frame.place_forget()
         self.dice_roll_frame.place_forget()
+    
+        # Configuração do frame principal
         self.master_chat_frame.place(relx=0.5, rely=0.5, anchor="center")
         self.master_chat_frame.columnconfigure(0, weight=1)
-        self.master_chat_frame.rowconfigure(1, weight=1) # Para a área de chat expandir
+        self.master_chat_frame.rowconfigure(2, weight=1)  # Espaço para o chat
 
-        # Botão Voltar
-        ttk.Button(self.master_chat_frame, text="Voltar", command=self.show_home).grid(row=0, column=0, sticky="nw", padx=5, pady=5)
+        # Título centralizado grande
+        ttk.Label(
+            self.master_chat_frame, 
+            text="Converse com o Mestre", 
+            font=("Arial", 18, "bold")
+        ).grid(row=0, column=0, columnspan=2, pady=(10, 20), sticky="ew")
 
-        # Imagem do Mestre
+        # Botão Voltar alinhado à esquerda
+        ttk.Button(
+            self.master_chat_frame, 
+            text="Voltar", 
+            command=self.show_home
+        ).grid(row=1, column=0, sticky="nw", padx=10, pady=5)
+
+        # Imagem do Mestre alinhada à direita
         try:
             master_image = Image.open("mestre.png")
-            # --- Redimensionar a imagem ---
-            new_width = 150  # Defina a nova largura desejada
-            new_height = 150 # Defina a nova altura desejada
-            resized_master_image = master_image.resize((new_width, new_height))
-            master_photo = ImageTk.PhotoImage(resized_master_image)
+            master_image = master_image.resize((150, 150))
+            master_photo = ImageTk.PhotoImage(master_image)
             master_label = ttk.Label(self.master_chat_frame, image=master_photo)
-            master_label.image = master_photo # Manter referência
-            master_label.grid(row=0, column=1, padx=10, pady=10, sticky="ne")
+            master_label.image = master_photo
+            master_label.grid(row=1, column=1, padx=10, pady=5, sticky="ne")
         except FileNotFoundError:
-            ttk.Label(self.master_chat_frame, text="Imagem do Mestre não encontrada.").grid(row=0, column=1, padx=10, pady=10, sticky="ne")
+            ttk.Label(
+                self.master_chat_frame, 
+                text="Ícone do Mestre", 
+                font=("Arial", 10)
+            ).grid(row=1, column=1, padx=10, pady=5, sticky="ne")
 
-        # Área de Chat
-        self.chat_area = tk.Text(self.master_chat_frame, state='disabled', wrap='word')
-        self.chat_area.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
+        # Área de Chat (abaixo do título e botões)
+        self.chat_area = tk.Text(
+            self.master_chat_frame, 
+            state='disabled', 
+            wrap='word',
+            font=("Arial", 11),
+            height=15,
+            width=50
+        )
+        self.chat_area.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
         # Entrada de Texto
-        self.input_entry = ttk.Entry(self.master_chat_frame)
-        self.input_entry.grid(row=2, column=0, padx=10, pady=5, sticky="ew")
-        self.input_entry.bind("<Return>", self.send_message) # Enviar com Enter
+        self.input_entry = ttk.Entry(
+            self.master_chat_frame,
+            font=("Arial", 11)
+        )      
+        self.input_entry.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
 
         # Botão Enviar
-        send_button = ttk.Button(self.master_chat_frame, text="Enviar", command=self.send_message)
-        send_button.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
+        send_button = ttk.Button(
+            self.master_chat_frame, 
+            text="Enviar", 
+            command=self.send_message
+        )
+        send_button.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
 
     def send_message(self, event=None):
         user_message = self.input_entry.get()
@@ -312,10 +416,60 @@ class App(tk.Tk):
         self.chat_area.see(tk.END) # Autoscroll para a última mensagem
 
     def get_master_response(self, user_message):
-        # Aqui você implementaria a lógica para obter a resposta do "mestre"
-        # Por enquanto, vamos simular uma resposta simples
-        master_response = f"Hmm, interessante pergunta sobre D&D! Deixe-me pensar..."
-        self.after(2000, self.display_message, "Mestre:", master_response)
+        # Agente 1 - Analista de Contexto
+        context_analyzer = Agent(
+            name="context_analyzer",
+            model=MODEL_ID,
+            description="Analisa o contexto da pergunta sobre RPG",
+            instruction="""Você é um analista especializado em RPG. Sua tarefa é:
+            1. Identificar o tema principal da pergunta
+            2. Determinar se é sobre regras, lore, construção de personagem ou outro
+            3. Extrair informações relevantes como classe, raça, nível do personagem
+            4. Retornar um resumo conciso do contexto"""
+        )
+    
+        # Agente 2 - Especialista em Regras
+        rules_expert = Agent(
+            name="rules_expert",
+            model=MODEL_ID,
+            description="Responde dúvidas sobre regras oficiais de RPG",
+            instruction="""Você é um mestre de RPG com 20 anos de experiência. Responda:
+            1. Baseado apenas nas regras oficiais do sistema
+            2. Seja preciso com páginas e referências quando possível
+            3. Para situações ambíguas, sugira interpretações alternativas
+            4. Mantenha a resposta curta e direta"""
+        )
+    
+        # Agente 3 - Criador de Histórias
+        storyteller = Agent(
+            name="storyteller",
+            model=MODEL_ID,
+            description="Cria conteúdo narrativo para RPG",
+            instruction="""Você é um contador de histórias. Sua tarefa é:
+            1. Enriquecer a resposta com elementos narrativos
+            2. Sugerir twists interessantes para a história
+            3. Criar NPCs, locais ou eventos memoráveis
+            4. Manter o tom adequado ao universo do jogo"""
+        )
+
+        # Primeiro analisamos o contexto
+        context = call_agent(context_analyzer, user_message)
+    
+        # Decidimos qual agente usar baseado no contexto
+        if "regra" in context.lower() or "mecânica" in context.lower():
+            response = call_agent(rules_expert, f"Contexto: {context}\nPergunta: {user_message}")
+        else:
+            # Para dúvidas narrativas, usamos ambos os especialistas
+            rules_part = call_agent(rules_expert, f"Contexto: {context}\nPergunta: {user_message}\nSe não for sobre regras, responda 'Não se aplica'")
+            story_part = call_agent(storyteller, f"Contexto: {context}\nPergunta: {user_message}")
+        
+            if "não se aplica" not in rules_part.lower():
+                response = f"📜 Regras:\n{rules_part}\n\n📖 Narrativa:\n{story_part}"
+            else:
+                response = story_part
+    
+        # Exibimos a resposta formatada
+        self.after(1000, self.display_message, "Mestre:", response)
 
     def show_dice_roll(self):
         self.home_frame.place_forget()
@@ -465,7 +619,7 @@ class App(tk.Tk):
         if character_class and race and gender:
             prompt = f"Gere um nome para um personagem da classe {character_class}, raça {race} e gênero {gender} em um cenário de fantasia."
             generated_name_from_ai = self.call_name_generation_agent(prompt)
-            self.generated_name.set(f"Nome Gerado: {generated_name_from_ai}")
+            self.generated_name.set(f"Nome: {generated_name_from_ai}")
         else:
             self.generated_name.set("Por favor, preencha todos os campos.")
 
@@ -474,7 +628,11 @@ class App(tk.Tk):
             name="name_generator",
             model=MODEL_ID,
             description="Agente para gerar nomes de personagens de fantasia.",
-            instruction="Você é um especialista em gerar nomes criativos e adequados para personagens de RPG de fantasia. Considere a classe, a raça e o gênero fornecidos para criar um nome interessante e adequado ao contexto.",
+            instruction="""Você é um especialista em gerar nomes criativos e adequados para personagens de RPG de fantasia. 
+            Considere a classe, a raça e o gênero fornecidos para criar um nome interessante e adequado ao contexto.
+            Voce sempre envia apenas um nome e sobre nome sem nenhma informação a mais, evite ao maximo repetir nomes, 
+            cada vez que for pedido para criar um nome novo mude o nome e o sobrenome 
+            """,
         )
         return call_agent(name_generator_agent, prompt)
 
