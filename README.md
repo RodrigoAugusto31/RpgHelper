@@ -114,7 +114,6 @@ Rodar dados:
 ## 📜 Licença
 
 Este projeto é **open-source**!  
-Sinta-se à vontade para **usar, modificar e compartilhar**.
 
 ---
 
